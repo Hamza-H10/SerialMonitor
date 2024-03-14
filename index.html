@@ -1,0 +1,162 @@
+
+
+<!doctype html>
+<html>
+
+<head>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js'></script>
+
+
+    
+
+    <style>
+        /* Styling for the container */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 70vh; /* Full height of the viewport */
+            border: 2px solid #000; /* Border for the container */
+            padding: 20px; /* Add some padding */
+            border-radius: 8px;
+        }
+
+        /* Styling for the data display area */
+        #dataDisplay {
+            width: 50%; /* 80% of the container's width */
+            max-height: 50vh; /* Maximum height for auto-scrolling */
+            overflow-y: auto; /* Enable vertical scrolling */
+            border: 2px solid #ccc; /* Border for the data display area */
+            padding: 10px; /* Add some padding */
+            background-color: #f0f0f0;
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center; /* Center align text */
+            border: 2px solid #ccc; /* Border for the h1 element */
+            padding: 10px; /* Add some padding */
+            /* background-color: #f0f0f0; Light color shade inside */
+            background-color: teal;
+            border-radius: 8px;
+        }
+
+        /* Styling for the select dropdown */
+        #baudRateDropdown {
+             /* Add margin to separate from the Disconnect button */
+            /* margin-left: 10px; */
+            
+            /* margin-bottom: 5px;  */
+            color: teal;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Serial Monitor</h1>
+
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+    <button id="connect">Connect to Arduino</button>
+    <!-- <button id="clear">Clear</button> -->
+    <!-- <button id="on">ON</button> -->
+    <button id="disconnect" >Disconnect</button>
+   
+<!-- <div style="text-align: right;"> -->
+    <!-- <form action="/app.js" style="display: inline-block;">
+        <input type="text" id="command" name="command" style="width: 200px;">
+        <input type="submit" value="Submit">
+    </form> -->
+    <form id="arduinoForm">
+        <!-- <label for="command">Command :</label><br> -->
+        <input type="text" id="command" name="command" style="width: 300px;">
+        <input type="submit" value="Submit">
+      </form>
+    
+    <!-- Select dropdown for baud rates -->
+    <select id="baudRateDropdown">
+        <option value="600">600</option>
+        <option value="750">750</option>
+        <option value="1200">1200</option>
+        <option value="2400">2400</option>
+        <option value="4800">4800</option>
+        <option value="9600" selected>9600</option>
+        <option value="19200">19200</option>
+        <option value="31250">31250</option>
+        <option value="38400">38400</option>
+        <option value="57600">57600</option>
+        <option value="74880">74880</option>
+        <option value="115200">115200</option>
+        <option value="230400">230400</option>
+        <option value="250000">250000</option>
+        <option value="460800">460800</option>
+        <option value="500000">500000</option>
+        <option value="921600">921600</option>
+        <option value="1000000">1000000</option>
+        <option value="2000000">2000000</option>
+
+        <!-- Add more options as needed -->
+    </select>
+    
+    </div>
+
+
+
+    <!-- Container for the data display -->
+    <div class="container">
+        <div id="dataDisplay"></div>
+    </div>
+
+    <script>
+        var socket = io();
+
+        document.getElementById('baudRateDropdown').addEventListener('change', changeBaudRate);
+
+
+        document.getElementById('connect').onclick = function () {
+
+            socket.emit('ConnectToPort', { "status": "1" });
+        };
+
+        document.getElementById('disconnect').onclick = function () {
+
+            socket.emit('ConnectToPort', { "status": "0" });
+
+        };
+
+        document.getElementById('arduinoForm').addEventListener('submit', function(event) {
+            // Prevent the form from submitting normally
+            event.preventDefault();
+
+            // Get the command from the form
+            var command = document.getElementById('command').value;
+
+            // Emit the formSubmit event with the command
+            socket.emit('formSubmit', { command: command });
+        });
+
+        function changeBaudRate() {
+        var baudRate = document.getElementById('baudRateDropdown').value;
+        socket.emit('ConnectToPort', { "status": "1", "baudRate": baudRate });
+    }
+    // function changeBaudRate() {
+    //     var baudRate = document.getElementById('baudRateDropdown').value;
+    //     socket.emit('chng_baudRate', { "baudRate": baudRate });
+    // }
+
+        socket.on('data', function (data) {
+            console.log(data);
+            appendData(data); // Append the received data to the display area
+        });
+
+        // Function to append data to the display area
+        function appendData(data) {
+            var displayArea = document.getElementById('dataDisplay');
+            displayArea.innerHTML += data + '<br>'; // Append the data with a line break
+            displayArea.scrollTop = displayArea.scrollHeight; // Auto-scroll to the bottom
+        }
+    </script>
+
+</body>
+
+</html>
