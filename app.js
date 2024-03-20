@@ -9,6 +9,9 @@ const parser = new parsers.Readline({
     delimiter: '\r\n'
 });
 
+// Use environment variable PORT if available, otherwise default to 3001
+const ConnectionPort = process.env.PORT || 3001;
+
 var port; // Declare port variable
 
 var app = http.createServer(function (req, res) {
@@ -96,5 +99,8 @@ io.on('connection', function (socket) {
 
 // connectToSerialPort(data.baudRate);
 
-app.listen(3000);
+app.listen(ConnectionPort, ()=>{
+    console.log('app running at http://localhost:'+ConnectionPort);
+
+});
 
