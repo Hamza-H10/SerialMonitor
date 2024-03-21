@@ -10,7 +10,7 @@ const parser = new parsers.Readline({
 });
 
 // Use environment variable PORT if available, otherwise default to 3001
-const ConnectionPort = process.env.PORT || 3001;
+const ConnectionPort = process.env.PORT || 3000;
 
 var port; // Declare port variable
 
@@ -100,7 +100,8 @@ io.on('connection', function (socket) {
 // connectToSerialPort(data.baudRate);
 
 app.listen(ConnectionPort, ()=>{
-    console.log('app running at http://localhost:'+ConnectionPort);
-
+    // console.log('app running at http://localhost:'+ConnectionPort);
+    console.log(`SerialMonitor app running at http://0.0.0.0:${ConnectionPort}`);
+    // console.log(`SerialMonitor app running at http://localhost:${ConnectionPort}`)
 });
 
